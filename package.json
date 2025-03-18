@@ -34,7 +34,7 @@
     "unist-util-visit": "^5.0.0"
   },
   "peerDependencies": {
-    "astro": "^3.0.0 || ^4.0.0"
+    "astro": "^5.5.3"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
