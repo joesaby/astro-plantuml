@@ -1,24 +1,44 @@
-import { defineConfig } from 'astro/config';
-import astroPlantUML from 'astro-plantuml';
-
-export default defineConfig({
-  site: 'https://your-site.com',
-  
-  integrations: [
-    astroPlantUML({
-      // Use a local PlantUML server for faster processing
-      serverUrl: 'http://localhost:8080/plantuml/png/',
-      
-      // Increase timeout for complex diagrams
-      timeout: 15000,
-      
-      // Add wrapper classes for styling
-      addWrapperClasses: true,
-      
-      // Use "uml" as your language identifier instead of default "plantuml"
-      // language: 'uml'
-    })
+{
+  "name": "astro-plantuml",
+  "version": "0.1.0",
+  "description": "Automatically convert PlantUML code blocks to images in Astro",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
   ],
-  
-  // Rest of your Astro configuration...
-});
+  "keywords": [
+    "astro-integration",
+    "astro-component",
+    "plantuml",
+    "diagrams",
+    "uml"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/astro-plantuml"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "unist-util-visit": "^5.0.0"
+  },
+  "peerDependencies": {
+    "astro": "^3.0.0 || ^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "astro": "^4.0.0",
+    "typescript": "^5.3.2"
+  }
+}
