@@ -1,0 +1,24 @@
+import { defineConfig } from 'astro/config';
+import astroPlantUML from 'astro-plantuml';
+
+export default defineConfig({
+  site: 'https://your-site.com',
+  
+  integrations: [
+    astroPlantUML({
+      // Use a local PlantUML server for faster processing
+      serverUrl: 'http://localhost:8080/plantuml/png/',
+      
+      // Increase timeout for complex diagrams
+      timeout: 15000,
+      
+      // Add wrapper classes for styling
+      addWrapperClasses: true,
+      
+      // Use "uml" as your language identifier instead of default "plantuml"
+      // language: 'uml'
+    })
+  ],
+  
+  // Rest of your Astro configuration...
+});
