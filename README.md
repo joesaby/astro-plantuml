@@ -15,6 +15,9 @@ An Astro integration for rendering PlantUML diagrams in your markdown files. Thi
 - 🎭 Optional CSS classes for styling
 - 🔧 Configurable language identifier for code blocks
 - 🌐 Support for custom PlantUML servers
+- 📁 Local diagram generation and caching
+- 🛠️ Built-in CLI tool for pre-generating diagrams
+- 🖼️ Support for both SVG and PNG formats
 
 ## Installation
 
@@ -81,25 +84,146 @@ class User {
 }
 @enduml
 ```
+
+## Diagram Generation Workflows
+
+The integration supports two main workflows:
+
+### 1. Server-Only Mode (Default)
+Diagrams are generated on-demand from the PlantUML server during build time:
+
+```js
+plantuml({
+  serverUrl: 'https://www.plantuml.com/plantuml/svg/',
+  format: 'svg'
+})
+```
+
+### 2. Local File Mode with Fallback
+Pre-generate diagrams during development, then use cached files during production builds:
+
+```js
+plantuml({
+  serverUrl: 'http://localhost:8080/svg/', // Local server for development
+  format: 'svg',
+  diagramsPath: 'diagrams' // Enable local file lookup
+})
+```
+
+## Pre-generating Diagrams
+
+Use the built-in CLI tool to generate diagrams ahead of time. The CLI accepts explicit options, making it independent of your Astro configuration:
+
+### Command Line Usage
+
+```bash
+# Generate diagrams for all markdown files (SVG format, public server)
+npx astro-plantuml generate
+
+# Generate for specific files/patterns
+npx astro-plantuml generate "src/pages/**/*.md"
+npx astro-plantuml generate "docs/*.md"
+
+# Generate PNG format with local server
+npx astro-plantuml generate --format png --server http://localhost:8080/png/
+
+# Generate with custom output directory
+npx astro-plantuml generate --output diagrams --format svg
+
+# Full options example
+npx astro-plantuml generate "src/**/*.md" --format png --server http://localhost:8080/png/ --output diagrams --timeout 15000
+```
+
+### CLI Options
+
+- `--format FORMAT` - Output format (svg, png) [default: svg]
+- `--server URL` - PlantUML server URL [default: https://www.plantuml.com/plantuml/svg/]
+- `--output PATH` - Output directory [default: diagrams]  
+- `--timeout MS` - Request timeout in milliseconds [default: 10000]
+
+**Note:** The CLI options are independent of your Astro integration configuration, giving you full control over diagram generation.
+
+### Integration with Build Tools
+
+**Package.json Scripts:**
+```json
+{
+  "scripts": {
+    "generate-diagrams": "astro-plantuml generate --format png --server http://localhost:8080/png/",
+    "generate-diagrams:prod": "astro-plantuml generate --format svg",
+    "prebuild": "npm run generate-diagrams:prod"
+  }
+}
+```
+
+**Git Hooks (`.git/hooks/pre-commit`):**
+```bash
+#!/bin/sh
+echo "Generating PlantUML diagrams..."
+npx astro-plantuml generate --format png --server http://localhost:8080/png/
+git add diagrams/
+```
+
+**GitHub Actions:**
+```yaml
+- name: Generate PlantUML diagrams
+  run: npx astro-plantuml generate --format svg --output diagrams
+```
+
+**Docker/CI environments:**
+```bash
+# Use public server in environments without local PlantUML server
+npx astro-plantuml generate --format svg --server https://www.plantuml.com/plantuml/svg/
 ```
 
 ## Configuration
 
 You can configure the integration with the following options:
 
+**With a PlantUML server:**
+
 ```js
 plantuml({
   // URL of the PlantUML server (default: 'http://www.plantuml.com/plantuml/png/')
   serverUrl: 'https://your-custom-plantuml-server.com/plantuml/png/',
-  
-  // Timeout for HTTP requests in milliseconds
+   
+  // Timeout for HTTP requests in milliseconds (default: 10000)
   timeout: 10000,
   
-  // Whether to add CSS classes to wrapper elements
+  // Whether to add CSS classes to wrapper elements (default: true)
   addWrapperClasses: true,
   
-  // Language identifier in code blocks
+  // Language identifier in code blocks (default: 'plantuml')
   language: 'plantuml'
+})
+```
+
+**Using pre-generated diagrams for prod builds:**
+
+```js
+plantuml({
+  // URL of the PlantUML server (default: 'http://www.plantuml.com/plantuml/svg/')
+  serverUrl: 'https://your-custom-plantuml-server.com/plantuml/svg/',
+  
+  // Expected image format, either PNG or SVG
+  format: 'svg', 
+   
+  // Path for storing/reading pre-generated diagrams (default: undefined)
+  // When set, enables local file lookup with server fallback
+  diagramsPath: process.env.NODE_ENV === 'production' ? 'diagrams' : undefined,
+  
+  // Timeout for HTTP requests in milliseconds (default: 10000)
+  timeout: 10000,
+  
+  // Whether to add CSS classes to wrapper elements (default: true)
+  addWrapperClasses: true,
+  
+  // Language identifier in code blocks (default: 'plantuml')
+  language: 'plantuml',
+  
+  // Remove inline styles from SVG for better CSS control (default: false)
+  // Only applies when format is 'svg'
+  removeInlineStyles: true
 })
 ```
 
@@ -131,7 +255,9 @@ You can set up your own PlantUML server using:
 When `addWrapperClasses` is enabled (default), the integration adds the following CSS classes:
 
 - `plantuml-diagram`: Wrapper around the diagram
-- `plantuml-img`: The actual image element
+- `plantuml-img`: The actual image element (PNG format)
+- `plantuml-svg`: The SVG element (SVG format)
+- `plantuml-error`: Error message container
 
 You can style these in your CSS:
 
@@ -146,6 +272,21 @@ You can style these in your CSS:
   height: auto;
   border: 1px solid #eee;
   border-radius: 4px;
+}
+
+.plantuml-svg {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.plantuml-error {
+  background: #fee;
+  border: 1px solid #f99;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
 }
 ```
 

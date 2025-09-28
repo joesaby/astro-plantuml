@@ -25,4 +25,25 @@ export interface PlantUMLOptions {
      * @default 'plantuml'
      */
     language?: string;
+    
+    /**
+     * Output format for PlantUML diagrams
+     * @default 'png'
+     */
+    format?: 'png' | 'svg';
+    
+    /**
+     * Remove inline styles from SVG elements for better CSS control
+     * Only applies when format is 'svg'
+     * @default false
+     */
+    removeInlineStyles?: boolean;
+    
+    /**
+     * Path where diagram files are stored/generated, relative to project root
+     * When set, the plugin will look for pre-generated diagrams in this directory
+     * If not found, it falls back to server generation
+     * @default undefined (always use server)
+     */
+    diagramsPath?: string;
   }

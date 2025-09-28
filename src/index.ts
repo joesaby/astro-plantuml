@@ -1,8 +1,9 @@
-import type { AstroIntegration, AstroConfig } from 'astro';
-import { createRemarkPlugin } from './remark-plugin.js';
-import type { PlantUMLOptions } from './types.js';
+import type {AstroConfig, AstroIntegration} from 'astro';
+import {createRemarkPlugin} from './remark-plugin.js';
+import type {PlantUMLOptions} from './types.js';
 
 export { type PlantUMLOptions } from './types.js';
+export { generateDiagramsFromAst } from './remark-cli.js';
 
 /**
  * Creates an Astro integration for converting PlantUML code blocks to images
@@ -21,19 +22,22 @@ export default function astroPlantUML(options: PlantUMLOptions = {}): AstroInteg
   return {
     name: 'astro-plantuml',
     hooks: {
-      'astro:config:setup': ({ updateConfig, config }: { updateConfig: (newConfig: Partial<AstroConfig>) => void, config: AstroConfig }) => {
+      'astro:config:setup': ({updateConfig, config}: {
+        updateConfig: (newConfig: Partial<AstroConfig>) => void,
+        config: AstroConfig
+      }) => {
         // Get existing remark plugins or initialize empty array
-        const existingRemarkPlugins = Array.isArray(config.markdown?.remarkPlugins) 
-          ? config.markdown.remarkPlugins 
-          : [];
-        
-        // Add our plugin to the array
+        const existingRemarkPlugins = Array.isArray(config.markdown?.remarkPlugins)
+            ? config.markdown.remarkPlugins
+            : [];
+
+        // Add our plugins to the array
         updateConfig({
           markdown: {
             ...config.markdown,
             remarkPlugins: [
               ...existingRemarkPlugins,
-              createRemarkPlugin(resolvedOptions)
+              createRemarkPlugin(resolvedOptions),
             ]
           }
         });

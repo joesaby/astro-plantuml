@@ -3,6 +3,9 @@
   "version": "0.1.4",
   "description": "Astro integration that automatically converts PlantUML code blocks in markdown to diagrams. Supports sequence, class, activity, state diagrams and more.",
   "type": "module",
+  "bin": {
+    "astro-plantuml": "./bin/generate.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -11,7 +14,8 @@
   },
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "scripts": {
     "build": "tsc",
@@ -32,7 +36,12 @@
   "license": "MIT",
   "dependencies": {
     "@types/axios": "^0.14.4",
-    "axios": "^1.8.4"
+    "axios": "^1.8.4",
+    "glob": "^10.3.0",
+    "unified": "^11.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
     "@astrojs/starlight": "^0.32.5",

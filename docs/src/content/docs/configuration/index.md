@@ -7,36 +7,98 @@ description: Learn about the configuration options available in astro-plantuml.
 
 The astro-plantuml integration accepts the following configuration options:
 
-## Options
+## Core Options
 
-### `server`
+### `serverUrl`
 
 The URL of the PlantUML server to use for rendering diagrams.
 
 ```js
 plantuml({
-  server: 'https://www.plantuml.com/plantuml'
+  serverUrl: 'https://www.plantuml.com/plantuml/svg/'
 })
 ```
 
-Default: `'https://www.plantuml.com/plantuml'`
+**Default:** `'https://www.plantuml.com/plantuml/png/'`
 
-### `theme`
+### `format`
 
-The PlantUML theme to use for rendering diagrams.
+The output format for diagrams: `'svg'` or `'png'`.
 
 ```js
 plantuml({
-  theme: 'dark'
+  format: 'svg'
 })
 ```
 
-Default: `'default'`
+**Default:** `'png'`
 
-## Complete Configuration Example
+### `diagramsPath`
 
-Here's an example showing all available configuration options:
+Path for storing/reading pre-generated diagrams. When set, enables local file lookup with server fallback.
 
+```js
+plantuml({
+  diagramsPath: 'diagrams'
+})
+```
+
+**Default:** `undefined` (always use server)
+
+### `timeout`
+
+Timeout for HTTP requests to the PlantUML server in milliseconds.
+
+```js
+plantuml({
+  timeout: 15000
+})
+```
+
+**Default:** `10000`
+
+## Styling Options
+
+### `addWrapperClasses`
+
+Whether to add CSS classes to wrapper elements for styling.
+
+```js
+plantuml({
+  addWrapperClasses: true
+})
+```
+
+**Default:** `true`
+
+### `removeInlineStyles`
+
+Remove inline styles from SVG elements for better CSS control. Only applies when `format` is `'svg'`.
+
+```js
+plantuml({
+  format: 'svg',
+  removeInlineStyles: true
+})
+```
+
+**Default:** `false`
+
+### `language`
+
+Language identifier in code blocks to process as PlantUML.
+
+```js
+plantuml({
+  language: 'plantuml'
+})
+```
+
+**Default:** `'plantuml'`
+
+## Complete Configuration Examples
+
+### Basic Configuration
 ```js
 import { defineConfig } from 'astro/config';
 import plantuml from 'astro-plantuml';
@@ -44,34 +106,92 @@ import plantuml from 'astro-plantuml';
 export default defineConfig({
   integrations: [
     plantuml({
-      server: 'https://www.plantuml.com/plantuml',
-      theme: 'dark'
+      format: 'svg',
+      serverUrl: 'https://www.plantuml.com/plantuml/svg/'
     })
   ]
 });
 ```
 
-## Using a Custom PlantUML Server
+### Development with Local Files
+```js
+import { defineConfig } from 'astro/config';
+import plantuml from 'astro-plantuml';
 
-If you want to use your own PlantUML server, you can configure it like this:
+export default defineConfig({
+  integrations: [
+    plantuml({
+      format: 'svg',
+      serverUrl: 'http://localhost:8080/svg/', // Local PlantUML server
+      diagramsPath: 'diagrams', // Enable local file caching
+      removeInlineStyles: true // Better CSS control
+    })
+  ]
+});
+```
+
+### All Options
+```js
+import { defineConfig } from 'astro/config';
+import plantuml from 'astro-plantuml';
+
+export default defineConfig({
+  integrations: [
+    plantuml({
+      serverUrl: 'https://www.plantuml.com/plantuml/svg/',
+      format: 'svg',
+      diagramsPath: 'diagrams',
+      timeout: 15000,
+      addWrapperClasses: true,
+      removeInlineStyles: true,
+      language: 'plantuml'
+    })
+  ]
+});
+```
+
+## Workflow Configurations
+
+### Server-Only Mode (Default)
+Best for simple setups with reliable internet connection:
 
 ```js
 plantuml({
-  server: 'https://your-plantuml-server.com/plantuml'
+  serverUrl: 'https://www.plantuml.com/plantuml/svg/',
+  format: 'svg'
 })
 ```
 
-Make sure your custom server supports the same API as the official PlantUML server.
+### Local File Mode with Fallback
+Best for development/production workflows with pre-generated diagrams:
 
-## Available Themes
+```js
+plantuml({
+  serverUrl: 'http://localhost:8080/svg/', // Development
+  format: 'svg',
+  diagramsPath: 'diagrams' // Use local files when available
+})
+```
 
-The following themes are available by default:
+## CSS Classes
 
-- `default` - The standard PlantUML theme
-- `dark` - A dark theme suitable for dark mode
-- `cerulean` - A blue-based theme
-- `cerulean-outline` - A blue-based theme with outlined elements
-- `minty` - A mint-colored theme
-- `minty-outline` - A mint-colored theme with outlined elements
-- `united` - A red-based theme
-- `united-outline` - A red-based theme with outlined elements 
+When `addWrapperClasses` is enabled, the following CSS classes are added:
+
+- `plantuml-diagram`: Wrapper around the diagram
+- `plantuml-img`: The actual image element (PNG format)
+- `plantuml-svg`: The SVG element (SVG format)
+- `plantuml-error`: Error message container
+
+```css
+.plantuml-diagram {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.plantuml-svg {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+``` 
