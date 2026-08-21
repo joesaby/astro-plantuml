@@ -23,8 +23,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
+          # Do NOT set registry-url here. That injects a placeholder
+          # NODE_AUTH_TOKEN into .npmrc and makes @semantic-release/npm
+          # report EINVALIDNPMTOKEN after OIDC fails. Match astro-mermaid:
+          # publish via npm Trusted Publishing (OIDC) only.
           node-version: "22"
-          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: npm ci
@@ -35,6 +38,7 @@ jobs:
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # npm publish uses Trusted Publishing (OIDC) via id-token: write —
-          # no NPM_TOKEN secret is required once the package is configured on npmjs.com.
+          # No NPM_TOKEN — same as astro-mermaid. Auth is OIDC Trusted
+          # Publishing (permissions.id-token: write). Configure the publisher
+          # on https://www.npmjs.com/package/astro-plantuml.
         run: npx semantic-release

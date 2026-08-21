@@ -444,7 +444,14 @@ Releases are automated with [semantic-release](https://github.com/semantic-relea
 
 ### npm Trusted Publishing (OIDC)
 
-Publishing uses npm Trusted Publishing (workflow `id-token: write`), same as `astro-mermaid`. Configure the GitHub Actions publisher for this repo on https://www.npmjs.com/package/astro-plantuml — no `NPM_TOKEN` secret is required.
+`astro-mermaid` does **not** store an `NPM_TOKEN` GitHub secret. Publishing uses npm Trusted Publishing (OIDC) via workflow `id-token: write`.
+
+Configure the same for this package on https://www.npmjs.com/package/astro-plantuml → **Trusted Publisher**:
+
+- Repository: `joesaby/astro-plantuml`
+- Workflow filename: `release.yml`
+
+Until that is set, the release job fails with `OIDC token exchange error - package not found` (then a misleading `EINVALIDNPMTOKEN` if a placeholder token is present).
 
 ### First-time setup
 

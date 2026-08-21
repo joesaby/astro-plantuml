@@ -39,7 +39,7 @@ This project uses **semantic-release** with **Conventional Commits**. All commit
 1. Push/merge to `main` triggers `.github/workflows/release.yml`
 2. Workflow runs `npm ci`, `npm run build`, then `semantic-release`
 3. If a releasable commit is found: bumps version, publishes to npm, creates GitHub release and tag
-4. Authentication uses **npm Trusted Publishing (OIDC)** — no `NPM_TOKEN` secret required once configured on npmjs.com
+4. Authentication uses **npm Trusted Publishing (OIDC)** — same as `astro-mermaid`. There is **no** `NPM_TOKEN` secret. Configure the Trusted Publisher on https://www.npmjs.com/package/astro-plantuml for workflow `release.yml`.
 
 ## Development Workflow
 
