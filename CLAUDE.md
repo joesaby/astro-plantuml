@@ -46,23 +46,25 @@ The integration uses Astro's hook system to inject a remark plugin that:
 5. Replaces the code block with an HTML image element
 
 ## Publishing Checklist
-- [ ] Update version in package.json
-- [ ] Ensure "withastro" keyword is present
-- [ ] Run `npm run build`
-- [ ] Test the integration
+Releases are automated via semantic-release on `main` (`.github/workflows/release.yml`).
+
+- [ ] Use Conventional Commits (`feat:`, `fix:`, …) — these drive the version bump
+- [ ] Ensure `"withastro"` keyword is present
+- [ ] Run `npm run build` locally before merging
 - [ ] Update README with any new features
-- [ ] Run `npm publish`
+- [ ] Merge to `main` — do **not** manually edit `version` or run `npm publish`
 
 ## Common Issues
 1. **Build errors**: Ensure all dependencies are installed
 2. **Diagram rendering fails**: Check PlantUML server URL and network connectivity
 3. **TypeScript errors**: Run `npm run build` to catch type issues early
 
-## Recent Changes (v0.1.2)
-- Switched from rehype to remark plugin to process PlantUML before syntax highlighting
-- Fixed encoding by using `deflateRawSync` instead of `deflateSync`
-- The remark plugin runs before Shiki to prevent language warnings
+## Recent Changes (v0.2.0)
+- Astro 7 Sätteri markdown processor support
+- Processor-aware registration (Sätteri / unified / legacy)
+- Shared render helpers for remark, Sätteri, and CLI paths
 
 ## Important Notes
-- The package is published to npm as `astro-plantuml` version 0.1.2
+- The package is published to npm as `astro-plantuml`
 - Documentation site available in the /docs directory
+- npm publish uses Trusted Publishing (OIDC); configure it on npmjs.com for this repo
