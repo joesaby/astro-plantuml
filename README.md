@@ -18,11 +18,37 @@ An Astro integration for rendering PlantUML diagrams in your markdown files. Thi
 - 📁 Local diagram generation and caching
 - 🛠️ Built-in CLI tool for pre-generating diagrams
 - 🖼️ Support for both SVG and PNG formats
+- ✅ Astro 7 **Sätteri** markdown processor support (plus unified / legacy)
 
 ## Installation
 
 ```bash
 npx astro add astro-plantuml
+```
+
+## Astro version compatibility
+
+| Astro | Markdown engine | How PlantUML hooks in |
+|-------|-----------------|----------------------|
+| 7+ | Sätteri (`@astrojs/markdown-satteri`, the new default) | a Sätteri **mdast plugin** |
+| 6.4 – 6.x | `unified()` processor | remark plugin via `markdown.processor` |
+| < 6.4 / Astro 5 | legacy pipeline | top-level `markdown.remarkPlugins` |
+
+If you previously pinned `markdown.processor` to `unified()` purely to keep PlantUML working on Astro 7, you can drop that workaround and let Astro use its default Sätteri processor.
+
+To stay on unified deliberately:
+
+```js
+import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
+import plantuml from 'astro-plantuml';
+
+export default defineConfig({
+  markdown: {
+    processor: unified(),
+  },
+  integrations: [plantuml()],
+});
 ```
 
 ## Quick Start
@@ -360,6 +386,15 @@ If there's an error generating a diagram, the integration will:
 3. Add the `plantuml-error` class to the error container
 
 ## Changelog
+
+### [0.2.0] - 2026-08-21
+#### Added
+- ✅ Astro 7 Sätteri markdown processor support via a native mdast plugin
+- 🔌 Processor-aware registration: Sätteri → `mdastPlugins`, unified → `remarkPlugins`, legacy → top-level arrays
+- 📦 Expanded `peerDependencies.astro` to `>=5.5.6`
+
+#### Changed
+- Shared PlantUML render helpers used by remark, Sätteri, and CLI paths
 
 ### [0.1.2] - 2024-01-26
 #### Fixed
