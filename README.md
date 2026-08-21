@@ -422,70 +422,40 @@ If there's an error generating a diagram, the integration will:
 
 ## Publishing
 
-### Prerequisites
-1. Ensure you have npm publish permissions for the `astro-plantuml` package
-2. Make sure you're logged in to npm: `npm login`
-3. All tests should pass and the package should build successfully
+Releases are automated with [semantic-release](https://github.com/semantic-release/semantic-release) on pushes to `main` (see `.github/workflows/release.yml`).
 
-### Publishing Steps
+### How it works
 
-1. **Update Version**
-   ```bash
-   # For patch release (bug fixes): 0.1.2 -> 0.1.3
-   npm version patch
-   
-   # For minor release (new features): 0.1.2 -> 0.2.0
-   npm version minor
-   
-   # For major release (breaking changes): 0.1.2 -> 1.0.0
-   npm version major
-   ```
+1. Merge a PR to `main` whose commits follow [Conventional Commits](https://www.conventionalcommits.org/)
+2. The release workflow builds the package and runs `semantic-release`
+3. If there are releasable commits (`feat`, `fix`, or breaking changes), it:
+   - bumps the version
+   - publishes to npm
+   - creates a GitHub release and git tag
 
-2. **Build the Package**
-   ```bash
-   npm run build
-   ```
+| Commit type | Release |
+|-------------|---------|
+| `fix:` | patch |
+| `feat:` | minor |
+| `feat!:` / `BREAKING CHANGE:` | major |
+| `chore:`, `docs:`, `ci:`, `test:`, … | none |
 
-3. **Test Locally** (optional but recommended)
-   ```bash
-   # Create a tarball
-   npm pack
-   
-   # Test in another project
-   npm install /path/to/astro-plantuml-0.1.3.tgz
-   ```
+**Do not** manually edit `version` in `package.json` — semantic-release owns it.
 
-4. **Update Changelog**
-   - Add new version entry to the Changelog section above
-   - Document all changes, fixes, and new features
-   - Use semantic versioning and date format
+### npm Trusted Publishing (OIDC)
 
-5. **Commit Changes**
-   ```bash
-   git add .
-   git commit -m "Release v0.1.3"
-   git push origin main
-   ```
+Publishing uses npm Trusted Publishing (workflow `id-token: write`), same as `astro-mermaid`. Configure the GitHub Actions publisher for this repo on https://www.npmjs.com/package/astro-plantuml — no `NPM_TOKEN` secret is required.
 
-6. **Create Git Tag**
-   ```bash
-   git tag v0.1.3
-   git push origin v0.1.3
-   ```
+### First-time setup
 
-7. **Publish to npm**
-   ```bash
-   npm publish
-   ```
+npm currently has `0.1.4` published, but this repo has no matching git tags. Before the first automated release, create a baseline tag so the next `feat` becomes `0.2.0` instead of `1.0.0`:
 
-8. **Verify Publication**
-   - Check npm page: https://www.npmjs.com/package/astro-plantuml
-   - Test installation: `npm install astro-plantuml@latest`
+```bash
+git tag v0.1.4 6da433d   # commit before the Sätteri feat
+git push origin v0.1.4
+```
 
-### Post-Publishing
-1. Update demo sites with the new version
-2. Create a GitHub release with release notes
-3. Announce in relevant channels (Discord, Twitter, etc.)
+Then merge this pipeline (or run **Release and Publish** via `workflow_dispatch`).
 
 ## Demo
 
@@ -500,4 +470,4 @@ Visit our demo sites to see:
 
 ## License
 
-MIT 
+MIT

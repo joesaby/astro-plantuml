@@ -21,7 +21,9 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "preview": "astro dev",
-    "astro:preview": "astro preview"
+    "astro:preview": "astro preview",
+    "semantic-release": "semantic-release",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "astro",
@@ -47,6 +49,7 @@
     "@astrojs/starlight": "^0.32.5",
     "@types/node": "^20.11.24",
     "astro": "^5.5.6",
+    "semantic-release": "^25.0.3",
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
