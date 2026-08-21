@@ -1,12 +1,11 @@
 import type { Root, Code } from 'mdast';
 import { visit } from 'unist-util-visit';
 import axios from 'axios';
-import * as zlib from 'node:zlib';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
 import type { PlantUMLOptions } from './types.js';
-import { encode64 } from './utils.js';
+import { encodePlantUmlForUrl } from './render.js';
 
 /**
  * PlantUML block with content and hash for file naming
@@ -118,20 +117,4 @@ async function generateDiagram(content: string, serverUrl: string, timeout: numb
   });
 
   return response.data;
-}
-
-/**
- * Encode PlantUML content for URL
- */
-function encodePlantUmlForUrl(plantUmlText: string): string {
-  let text = plantUmlText.trim();
-  if (!text.startsWith('@startuml')) {
-    text = '@startuml\n' + text;
-  }
-  if (!text.endsWith('@enduml')) {
-    text = text + '\n@enduml';
-  }
-
-  const compressed = zlib.deflateRawSync(text, { level: 9 });
-  return encode64(compressed);
 }

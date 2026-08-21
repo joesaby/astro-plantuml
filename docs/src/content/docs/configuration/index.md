@@ -96,6 +96,16 @@ plantuml({
 
 **Default:** `'plantuml'`
 
+## Astro 7 / Sätteri
+
+On Astro 7, the default markdown processor is **Sätteri**. `astro-plantuml` detects the active processor and registers either:
+
+- a Sätteri **mdast plugin** when `markdown.processor` is `satteri()`
+- a **remark plugin** on `unified({...})` when that processor is used
+- the legacy top-level `markdown.remarkPlugins` array on older Astro versions
+
+No extra config is required for the Astro 7 default. The CLI / offline generation path is unchanged.
+
 ## Complete Configuration Examples
 
 ### Basic Configuration
