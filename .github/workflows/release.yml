@@ -1,40 +1,48 @@
-name: Release and Publish
+# Automated semver releases from conventional commits on main.
+# Bumps package.json, updates CHANGELOG.md, creates a GitHub Release, and
+# publishes to npm.
+#
+# Commit message format (Conventional Commits):
+#   feat: new feature        -> minor bump (0.x.y -> 0.(x+1).0)
+#   fix: bug fix             -> patch bump
+#   feat!: breaking change   -> major bump
+#   chore/docs/test: no release unless configured
+#
+# First-time setup: tag the current version so future releases continue from it:
+#   git tag v0.2.0 && git push origin v0.2.0
+#
+# Required repo secrets: npm_token (npm automation token with publish access)
+
+name: Release
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: write
   issues: write
   pull-requests: write
-  id-token: write
 
 jobs:
   release:
+    name: Semantic release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          registry-url: "https://registry.npmjs.org"
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
+      - run: npm run build
 
-      - name: Build
-        run: npm run build
-
-      - name: Run semantic-release
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # npm publish uses Trusted Publishing (OIDC) via id-token: write —
-          # no NPM_TOKEN secret is required once the package is configured on npmjs.com.
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
         run: npx semantic-release

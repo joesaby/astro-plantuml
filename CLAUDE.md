@@ -67,4 +67,4 @@ Releases are automated via semantic-release on `main` (`.github/workflows/releas
 ## Important Notes
 - The package is published to npm as `astro-plantuml`
 - Documentation site available in the /docs directory
-- npm publish uses Trusted Publishing (OIDC); configure it on npmjs.com for this repo
+- npm publish uses the `npm_token` GitHub Actions secret (`NODE_AUTH_TOKEN`); semantic-release updates CHANGELOG.md and commits release assets
