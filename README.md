@@ -429,7 +429,8 @@ Releases are automated with [semantic-release](https://github.com/semantic-relea
 1. Merge a PR to `main` whose commits follow [Conventional Commits](https://www.conventionalcommits.org/)
 2. The release workflow builds the package and runs `semantic-release`
 3. If there are releasable commits (`feat`, `fix`, or breaking changes), it:
-   - bumps the version
+   - bumps the version in `package.json`
+   - updates `CHANGELOG.md`
    - publishes to npm
    - creates a GitHub release and git tag
 
@@ -442,20 +443,26 @@ Releases are automated with [semantic-release](https://github.com/semantic-relea
 
 **Do not** manually edit `version` in `package.json` — semantic-release owns it.
 
-### npm Trusted Publishing (OIDC)
+### npm authentication
 
-Publishing uses npm Trusted Publishing (workflow `id-token: write`), same as `astro-mermaid`. Configure the GitHub Actions publisher for this repo on https://www.npmjs.com/package/astro-plantuml — no `NPM_TOKEN` secret is required.
+Publishing uses the `npm_token` GitHub Actions secret. Create an npm automation token at https://www.npmjs.com/settings/~/tokens and set it with:
+
+```bash
+gh secret set npm_token --repo joesaby/astro-plantuml
+```
+
+Workflows pass it as `NODE_AUTH_TOKEN` (see `release.yml` and `npm-publish-manual.yml`).
 
 ### First-time setup
 
-npm currently has `0.1.4` published, but this repo has no matching git tags. Before the first automated release, create a baseline tag so the next `feat` becomes `0.2.0` instead of `1.0.0`:
+Before the first automated release, tag the current published version so semantic-release continues from it:
 
 ```bash
-git tag v0.1.4 6da433d   # commit before the Sätteri feat
-git push origin v0.1.4
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
-Then merge this pipeline (or run **Release and Publish** via `workflow_dispatch`).
+To retry a failed npm publish without bumping the version, use **Publish to npm (manual)** in the Actions tab.
 
 ## Demo
 

@@ -39,7 +39,8 @@ This project uses **semantic-release** with **Conventional Commits**. All commit
 1. Push/merge to `main` triggers `.github/workflows/release.yml`
 2. Workflow runs `npm ci`, `npm run build`, then `semantic-release`
 3. If a releasable commit is found: bumps version, publishes to npm, creates GitHub release and tag
-4. Authentication uses **npm Trusted Publishing (OIDC)** — no `NPM_TOKEN` secret required once configured on npmjs.com
+4. Authentication uses the `npm_token` GitHub Actions secret (`NODE_AUTH_TOKEN` in workflows)
+5. `@semantic-release/changelog` and `@semantic-release/git` commit `CHANGELOG.md` and version bumps back to `main` with `[skip ci]`
 
 ## Development Workflow
 

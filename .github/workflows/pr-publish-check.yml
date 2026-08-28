@@ -1,0 +1,23 @@
+# Validates that `npm publish` would succeed — packaging, package.json
+# "files" config, tarball contents — on every PR to main, without ever
+# publishing anything or requiring registry credentials. This is a safe
+# rehearsal for the real publish that release.yml performs (which
+# runs on push to main when conventional commits warrant a release).
+name: PR publish check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-dry-run-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - name: Verify the package would publish correctly (no upload, no credentials)
+        run: npm publish --dry-run

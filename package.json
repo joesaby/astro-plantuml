@@ -47,12 +47,24 @@
   },
   "devDependencies": {
     "@astrojs/starlight": "^0.32.5",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
+    "@semantic-release/npm": "^12.0.2",
     "@types/node": "^20.11.24",
     "astro": "^5.5.6",
-    "semantic-release": "^25.0.3",
+    "semantic-release": "^24.2.9",
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
     "astro": ">=5.5.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joesaby/astro-plantuml.git"
+  },
+  "homepage": "https://github.com/joesaby/astro-plantuml#readme",
+  "bugs": {
+    "url": "https://github.com/joesaby/astro-plantuml/issues"
   }
 }
