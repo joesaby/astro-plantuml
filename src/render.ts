@@ -3,6 +3,8 @@ import * as zlib from 'node:zlib';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
+import { Agent as HttpAgent } from 'node:http';
+import { Agent as HttpsAgent } from 'node:https';
 import type { PlantUMLOptions } from './types.js';
 import { encode64 } from './utils.js';
 
@@ -17,6 +19,7 @@ export interface ResolvedPlantUMLOptions {
   format: 'png' | 'svg';
   removeInlineStyles: boolean;
   diagramsPath?: string;
+  keepAlive: boolean;
 }
 
 /**
@@ -32,8 +35,16 @@ export function resolvePlantUMLOptions(options: PlantUMLOptions = {}): ResolvedP
     language: options.language || 'plantuml',
     removeInlineStyles: options.removeInlineStyles || false,
     diagramsPath: options.diagramsPath,
+    keepAlive: options.keepAlive !== false,
   };
 }
+
+// Shared agents for the non-keep-alive path so requests do not pay the cost
+// of allocating a new agent (and its connection pool bookkeeping) per call.
+// Kept separate from axios/Node's default `keepAlive: true` global agents,
+// which stay untouched when `keepAlive` resolves to `true`.
+const noKeepAliveHttpAgent = new HttpAgent({ keepAlive: false });
+const noKeepAliveHttpsAgent = new HttpsAgent({ keepAlive: false });
 
 /**
  * Encode PlantUML source for a PlantUML server URL
@@ -203,6 +214,9 @@ export async function renderPlantUmlHtml(
   const response = await axios.get(url, {
     responseType: options.format === 'svg' ? 'text' : 'arraybuffer',
     timeout: options.timeout,
+    ...(options.keepAlive
+      ? {}
+      : { httpAgent: noKeepAliveHttpAgent, httpsAgent: noKeepAliveHttpsAgent }),
   });
 
   if (options.format === 'svg') {

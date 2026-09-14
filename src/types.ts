@@ -46,4 +46,14 @@ export interface PlantUMLOptions {
      * @default undefined (always use server)
      */
     diagramsPath?: string;
+
+    /**
+     * Reuse HTTP connections (Keep-Alive) when requesting diagrams from the
+     * PlantUML server. Some local servers, such as `plantuml.jar --picoweb`,
+     * handle persistent connections poorly and can fail or hang on the
+     * second and later requests on a page with multiple diagrams. Set this
+     * to `false` if you see rendering issues with a local PlantUML server.
+     * @default true
+     */
+    keepAlive?: boolean;
   }
