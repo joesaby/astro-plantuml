@@ -220,7 +220,11 @@ plantuml({
   addWrapperClasses: true,
   
   // Language identifier in code blocks (default: 'plantuml')
-  language: 'plantuml'
+  language: 'plantuml',
+
+  // Reuse HTTP connections (Keep-Alive) when requesting diagrams (default: true)
+  // Set to false if a local PlantUML server fails on the second diagram on a page
+  keepAlive: true
 })
 ```
 
@@ -249,7 +253,27 @@ plantuml({
   
   // Remove inline styles from SVG for better CSS control (default: false)
   // Only applies when format is 'svg'
-  removeInlineStyles: true
+  removeInlineStyles: true,
+
+  // Reuse HTTP connections (Keep-Alive) when requesting diagrams (default: true)
+  // Set to false if a local PlantUML server fails on the second diagram on a page
+  keepAlive: true
+})
+```
+
+### Using a Local PlantUML Server (`picoweb`)
+
+Some local PlantUML servers, such as `plantuml.jar --picoweb`, handle persistent
+(Keep-Alive) HTTP connections poorly. On a page with multiple diagrams, the
+second and later requests reused on the same connection can fail with a reset
+connection or hang. If you run into this with a local server, set `keepAlive`
+to `false` so each request opens a new connection:
+
+```js
+plantuml({
+  serverUrl: 'http://localhost:8080/plantuml/svg/',
+  format: 'svg',
+  keepAlive: false
 })
 ```
 
