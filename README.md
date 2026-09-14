@@ -1,5 +1,7 @@
 # astro-plantuml
 
+[![npm version](https://img.shields.io/npm/v/astro-plantuml.svg)](https://www.npmjs.com/package/astro-plantuml)
+
 An Astro integration for rendering PlantUML diagrams in your markdown files. This integration automatically converts PlantUML code blocks into beautiful diagrams using the PlantUML server.
 
 ## Demo Sites
